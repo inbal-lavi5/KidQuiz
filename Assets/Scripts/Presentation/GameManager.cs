@@ -54,7 +54,7 @@ namespace KidQuiz.Presentation
 
         private void Start()
         {
-            screenManager.Home.Initialize(HandleStartRequested, HandleViewLeaderboard, HandleToggleSound);
+            screenManager.Home.Initialize(HandleStartRequested, HandleViewLeaderboard, HandleToggleSound, audioManager);
             screenManager.Home.SetMuted(audioManager.IsMuted);
             screenManager.Quiz.Initialize(_questionProvider, HandleQuizExit, audioManager);
             screenManager.Results.Initialize(HandlePlayAgain, HandleGoHome);

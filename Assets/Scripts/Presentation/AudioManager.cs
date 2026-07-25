@@ -15,6 +15,7 @@ namespace KidQuiz.Presentation
         [SerializeField] private AudioClip backgroundMusic;
         [SerializeField] private AudioClip correctSfx;
         [SerializeField] private AudioClip wrongSfx;
+        [SerializeField] private AudioClip buttonPress;
 
         public bool IsMuted { get; private set; }
 
@@ -56,6 +57,11 @@ namespace KidQuiz.Presentation
         public void PlayWrong()
         {
             PlayOneShot(wrongSfx);
+        }
+
+        public void PlayButton()
+        {
+            PlayOneShot(buttonPress);
         }
 
         private void PlayOneShot(AudioClip clip)

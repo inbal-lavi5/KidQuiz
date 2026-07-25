@@ -26,12 +26,14 @@ namespace KidQuiz.Presentation
         private Action<string, Topic> _onStart;
         private Action _onViewLeaderboard;
         private Action _onToggleSound;
+        private AudioManager _audioManager;
 
-        public void Initialize(Action<string, Topic> onStart, Action onViewLeaderboard, Action onToggleSound)
+        public void Initialize(Action<string, Topic> onStart, Action onViewLeaderboard, Action onToggleSound, AudioManager audioManager)
         {
             _onStart = onStart;
             _onViewLeaderboard = onViewLeaderboard;
             _onToggleSound = onToggleSound;
+            _audioManager = audioManager;
         }
 
         public void SetMuted(bool isMuted)
@@ -45,7 +47,7 @@ namespace KidQuiz.Presentation
         public override void Show()
         {
             base.Show();
-            SelectTopic(Topic.Science);
+            // SelectTopic(Topic.Science);
             UpdateStartButtonState();
         }
 
@@ -94,14 +96,18 @@ namespace KidQuiz.Presentation
             if (scienceSelectionRing != null)
             {
                 scienceSelectionRing.SetActive(topic == Topic.Science);
+                _audioManager.PlayButton();
+
             }
             if (generalKnowledgeSelectionRing != null)
             {
                 generalKnowledgeSelectionRing.SetActive(topic == Topic.GeneralKnowledge);
+                _audioManager.PlayButton();
             }
             if (mathSelectionRing != null)
             {
                 mathSelectionRing.SetActive(topic == Topic.Math);
+                _audioManager.PlayButton();
             }
         }
 
@@ -128,7 +134,8 @@ namespace KidQuiz.Presentation
             {
                 return;
             }
-
+            
+            _audioManager.PlayButton();
             _onStart?.Invoke(playerName, _selectedTopic);
         }
 
