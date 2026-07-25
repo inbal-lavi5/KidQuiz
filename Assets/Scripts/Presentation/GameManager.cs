@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using KidQuiz.Config;
 using KidQuiz.Data;
 using KidQuiz.Domain;
@@ -17,7 +19,10 @@ namespace KidQuiz.Presentation
         [SerializeField] private QuizConfig hardConfig;
         [SerializeField] private QuestionBank offlineQuestionBank;
 
+        private const int LeaderboardSize = 10;
+
         private IQuestionProvider _questionProvider;
+        private IScoreRepository _scoreRepository;
         private string _playerName;
 
         private void Awake()
@@ -36,6 +41,12 @@ namespace KidQuiz.Presentation
             var triviaProvider = new TriviaApiProvider(apiClient, randomizer);
             var localProvider = new LocalQuestionProvider(offlineQuestionBank, randomizer);
             _questionProvider = new FallbackQuestionProvider(triviaProvider, localProvider);
+
+            // Not committed - see Assets/Resources/FirebaseConfig.example.asset and the README.
+            var firebaseConfig = Resources.Load<FirebaseConfig>("FirebaseConfig");
+            _scoreRepository = firebaseConfig != null && !string.IsNullOrWhiteSpace(firebaseConfig.DatabaseUrl)
+                ? new FirebaseScoreRepository(apiClient, firebaseConfig.DatabaseUrl)
+                : null;
         }
 
         private void Start()
@@ -55,10 +66,24 @@ namespace KidQuiz.Presentation
             screenManager.Quiz.BeginRound(config, HandleRoundComplete);
         }
 
-        private void HandleRoundComplete(QuizResult result)
+        private async void HandleRoundComplete(QuizResult result)
         {
             screenManager.ShowResults();
             screenManager.Results.ShowResult(result);
+
+            if (_scoreRepository == null)
+            {
+                screenManager.Results.ShowLeaderboardUnavailable();
+                return;
+            }
+
+            var entry = new ScoreEntry(_playerName, result.Score, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            using var cts = new CancellationTokenSource();
+
+            await _scoreRepository.SubmitAsync(entry, cts.Token);
+            var topScores = await _scoreRepository.GetTopAsync(LeaderboardSize, cts.Token);
+
+            screenManager.Results.ShowLeaderboardLoaded(topScores);
         }
 
         private void HandlePlayAgain()

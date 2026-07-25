@@ -105,3 +105,8 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Firebase config holds a real database URL - copy FirebaseConfig.example.asset,
+# rename it, and set your own URL. See README for setup.
+/Assets/Resources/FirebaseConfig.asset
+/Assets/Resources/FirebaseConfig.asset.meta
