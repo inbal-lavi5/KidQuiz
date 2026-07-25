@@ -24,6 +24,7 @@ namespace KidQuiz.Presentation
         private IQuestionProvider _questionProvider;
         private IScoreRepository _scoreRepository;
         private string _playerName;
+        private QuizConfig _lastConfig;
 
         private void Awake()
         {
@@ -52,24 +53,33 @@ namespace KidQuiz.Presentation
         private void Start()
         {
             screenManager.Home.Initialize(HandleStartRequested);
-            screenManager.Quiz.Initialize(_questionProvider);
-            screenManager.Results.Initialize(HandlePlayAgain);
+            screenManager.Quiz.Initialize(_questionProvider, HandleQuizExit);
+            screenManager.Results.Initialize(HandlePlayAgain, HandleGoHome);
             screenManager.ShowHome();
         }
 
         private void HandleStartRequested(string playerName, Difficulty difficulty)
         {
             _playerName = playerName;
-            QuizConfig config = SelectConfig(difficulty);
+            _lastConfig = SelectConfig(difficulty);
+            BeginRound(_lastConfig);
+        }
 
+        private void BeginRound(QuizConfig config)
+        {
             screenManager.ShowQuiz();
             screenManager.Quiz.BeginRound(config, HandleRoundComplete);
+        }
+
+        private void HandleQuizExit()
+        {
+            screenManager.ShowHome();
         }
 
         private async void HandleRoundComplete(QuizResult result)
         {
             screenManager.ShowResults();
-            screenManager.Results.ShowResult(result);
+            screenManager.Results.ShowResult(result, _playerName);
 
             if (_scoreRepository == null)
             {
@@ -87,6 +97,11 @@ namespace KidQuiz.Presentation
         }
 
         private void HandlePlayAgain()
+        {
+            BeginRound(_lastConfig);
+        }
+
+        private void HandleGoHome()
         {
             screenManager.ShowHome();
         }

@@ -12,8 +12,10 @@ namespace KidQuiz.Presentation
         [SerializeField] private Button easyButton;
         [SerializeField] private Button mediumButton;
         [SerializeField] private Button hardButton;
+        [SerializeField] private GameObject easySelectionRing;
+        [SerializeField] private GameObject mediumSelectionRing;
+        [SerializeField] private GameObject hardSelectionRing;
         [SerializeField] private Button startButton;
-        [SerializeField] private TMP_Text selectedDifficultyText;
 
         private Difficulty _selectedDifficulty = Difficulty.Easy;
         private Action<string, Difficulty> _onStart;
@@ -52,9 +54,18 @@ namespace KidQuiz.Presentation
         private void SelectDifficulty(Difficulty difficulty)
         {
             _selectedDifficulty = difficulty;
-            if (selectedDifficultyText != null)
+
+            if (easySelectionRing != null)
             {
-                selectedDifficultyText.text = $"Selected: {difficulty}";
+                easySelectionRing.SetActive(difficulty == Difficulty.Easy);
+            }
+            if (mediumSelectionRing != null)
+            {
+                mediumSelectionRing.SetActive(difficulty == Difficulty.Medium);
+            }
+            if (hardSelectionRing != null)
+            {
+                hardSelectionRing.SetActive(difficulty == Difficulty.Hard);
             }
         }
 

@@ -14,9 +14,12 @@ namespace KidQuiz.Presentation
     {
         [SerializeField] private TMP_Text questionText;
         [SerializeField] private TMP_Text scoreText;
-        [SerializeField] private Image timerFill;
+        [SerializeField] private TMP_Text questionCounterText;
+        [SerializeField] private TMP_Text categoryText;
+        [SerializeField] private RectTransform timerFillRect;
         [SerializeField] private Transform answerButtonParent;
         [SerializeField] private AnswerButton answerButtonPrefab;
+        [SerializeField] private Button backButton;
         [SerializeField] private float feedbackDelaySeconds = 1.2f;
 
         private ObjectPool<AnswerButton> _buttonPool;
@@ -25,6 +28,7 @@ namespace KidQuiz.Presentation
         private IQuestionProvider _questionProvider;
         private QuizConfig _config;
         private Action<QuizResult> _onComplete;
+        private Action _onExit;
 
         private QuizSession _session;
         private CancellationTokenSource _fetchCts;
@@ -32,15 +36,39 @@ namespace KidQuiz.Presentation
         private bool _acceptingAnswers;
         private float _questionStartTime;
         private int _correctCount;
+        private int _questionNumber;
+        private int _totalQuestions;
 
         private void Awake()
         {
             _buttonPool = new ObjectPool<AnswerButton>(answerButtonPrefab, answerButtonParent, prewarmCount: 4);
         }
 
-        public void Initialize(IQuestionProvider questionProvider)
+        public void Initialize(IQuestionProvider questionProvider, Action onExit)
         {
             _questionProvider = questionProvider;
+            _onExit = onExit;
+        }
+
+        private void OnEnable()
+        {
+            if (backButton != null)
+            {
+                backButton.onClick.AddListener(HandleBackClicked);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (backButton != null)
+            {
+                backButton.onClick.RemoveListener(HandleBackClicked);
+            }
+        }
+
+        private void HandleBackClicked()
+        {
+            _onExit?.Invoke();
         }
 
         public override void Hide()
@@ -55,6 +83,7 @@ namespace KidQuiz.Presentation
             _config = config;
             _onComplete = onComplete;
             _correctCount = 0;
+            _questionNumber = 0;
             scoreText.text = "0";
             questionText.text = "Loading...";
             ClearAnswerButtons();
@@ -76,6 +105,7 @@ namespace KidQuiz.Presentation
                 return;
             }
 
+            _totalQuestions = questions.Count;
             _session = new QuizSession(questions, config.SecondsPerQuestion);
             ShowCurrentQuestion();
         }
@@ -86,12 +116,24 @@ namespace KidQuiz.Presentation
 
             Question question = _session.CurrentQuestion;
             questionText.text = question.Prompt;
+            _questionNumber++;
 
+            if (questionCounterText != null)
+            {
+                questionCounterText.text = $"Question {_questionNumber}/{_totalQuestions}";
+            }
+            if (categoryText != null)
+            {
+                categoryText.text = question.Difficulty.ToString().ToUpperInvariant();
+            }
+
+            int slotIndex = 0;
             foreach (string option in question.Options)
             {
                 AnswerButton button = _buttonPool.Get();
-                button.Bind(option, HandleAnswerSelected);
+                button.Bind(option, HandleAnswerSelected, slotIndex);
                 _activeButtons.Add(button);
+                slotIndex++;
             }
 
             _acceptingAnswers = true;
@@ -109,9 +151,10 @@ namespace KidQuiz.Presentation
             while (elapsed < duration && _acceptingAnswers)
             {
                 elapsed += Time.deltaTime;
-                if (timerFill != null)
+                if (timerFillRect != null)
                 {
-                    timerFill.fillAmount = 1f - Mathf.Clamp01(elapsed / duration);
+                    float ratio = 1f - Mathf.Clamp01(elapsed / duration);
+                    timerFillRect.anchorMax = new Vector2(ratio, timerFillRect.anchorMax.y);
                 }
                 yield return null;
             }

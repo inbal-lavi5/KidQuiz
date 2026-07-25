@@ -11,22 +11,41 @@ namespace KidQuiz.Presentation
     {
         [SerializeField] private TMP_Text scoreText;
         [SerializeField] private TMP_Text correctText;
+        [SerializeField] private TMP_Text subtitleText;
         [SerializeField] private Button playAgainButton;
+        [SerializeField] private Button homeButton;
         [SerializeField] private Transform leaderboardContainer;
         [SerializeField] private TMP_Text leaderboardStatusText;
 
+        [Header("Leaderboard row building blocks")]
+        [SerializeField] private TMP_FontAsset rowNameFont;
+        [SerializeField] private TMP_FontAsset rowScoreFont;
+        [SerializeField] private Sprite circleSprite;
+
+        private static readonly Color[] RankColors = { UiPalette.SunYellow, UiPalette.Silver, UiPalette.Bronze };
+
         private readonly List<GameObject> _leaderboardRows = new();
         private Action _onPlayAgain;
+        private Action _onHome;
+        private string _currentPlayerName;
 
-        public void Initialize(Action onPlayAgain)
+        public void Initialize(Action onPlayAgain, Action onHome)
         {
             _onPlayAgain = onPlayAgain;
+            _onHome = onHome;
         }
 
-        public void ShowResult(QuizResult result)
+        public void ShowResult(QuizResult result, string playerName)
         {
-            scoreText.text = $"Score: {result.Score}";
-            correctText.text = $"{result.CorrectCount} / {result.TotalQuestions} correct";
+            _currentPlayerName = playerName;
+            scoreText.text = $"{result.CorrectCount}/{result.TotalQuestions}";
+            correctText.text = $"Correct Answers · {result.Score} pts";
+
+            if (subtitleText != null)
+            {
+                subtitleText.text = $"Great exploring, {playerName}!";
+            }
+
             ShowLeaderboardLoading();
         }
 
@@ -61,9 +80,9 @@ namespace KidQuiz.Presentation
 
             SetStatus(null);
 
-            foreach (ScoreEntry entry in entries)
+            for (int i = 0; i < entries.Count; i++)
             {
-                CreateLeaderboardRow(entry);
+                CreateLeaderboardRow(entries[i], i);
             }
         }
 
@@ -79,21 +98,78 @@ namespace KidQuiz.Presentation
             leaderboardStatusText.text = hasMessage ? message : string.Empty;
         }
 
-        private void CreateLeaderboardRow(ScoreEntry entry)
+        private void CreateLeaderboardRow(ScoreEntry entry, int rank)
         {
-            var rowGO = new GameObject("LeaderboardRow", typeof(RectTransform));
-            rowGO.transform.SetParent(leaderboardContainer, false);
+            bool isCurrentPlayer = !string.IsNullOrEmpty(_currentPlayerName) &&
+                                    string.Equals(entry.PlayerName, _currentPlayerName, StringComparison.OrdinalIgnoreCase);
 
-            var text = rowGO.AddComponent<TextMeshProUGUI>();
-            text.text = $"{entry.PlayerName} - {entry.Score}";
-            text.fontSize = 36;
-            text.color = Color.black;
-            text.alignment = TextAlignmentOptions.MidlineLeft;
+            var row = new GameObject("LeaderboardRow", typeof(RectTransform), typeof(Image), typeof(HorizontalLayoutGroup));
+            row.transform.SetParent(leaderboardContainer, false);
+            row.GetComponent<Image>().color = isCurrentPlayer ? UiPalette.DeepSky : new Color(0, 0, 0, 0);
 
-            var layoutElement = rowGO.AddComponent<LayoutElement>();
-            layoutElement.preferredHeight = 50;
+            var rowLayout = row.GetComponent<HorizontalLayoutGroup>();
+            rowLayout.spacing = 20;
+            rowLayout.padding = new RectOffset(10, 10, 6, 6);
+            rowLayout.childAlignment = TextAnchor.MiddleLeft;
+            rowLayout.childControlWidth = false;
+            rowLayout.childControlHeight = true;
+            rowLayout.childForceExpandWidth = false;
+            rowLayout.childForceExpandHeight = true;
 
-            _leaderboardRows.Add(rowGO);
+            var rowLayoutElement = row.AddComponent<LayoutElement>();
+            rowLayoutElement.preferredHeight = 76;
+
+            Color rankColor = rank < RankColors.Length ? RankColors[rank] : Color.white;
+            var rankBadge = CreateCircle(row.transform, 56, rankColor, (rank + 1).ToString());
+
+            var name = new GameObject("Name", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            name.transform.SetParent(row.transform, false);
+            name.font = rowNameFont;
+            name.fontSize = 30;
+            name.color = UiPalette.Ink;
+            name.text = isCurrentPlayer ? $"{entry.PlayerName} (You)" : entry.PlayerName;
+            name.alignment = TextAlignmentOptions.MidlineLeft;
+            var nameLayout = name.gameObject.AddComponent<LayoutElement>();
+            nameLayout.flexibleWidth = 1;
+            nameLayout.minWidth = 100;
+
+            var score = new GameObject("Score", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            score.transform.SetParent(row.transform, false);
+            score.font = rowScoreFont;
+            score.fontSize = 30;
+            score.color = UiPalette.Ink;
+            score.text = entry.Score.ToString();
+            score.alignment = TextAlignmentOptions.MidlineRight;
+            var scoreLayout = score.gameObject.AddComponent<LayoutElement>();
+            scoreLayout.preferredWidth = 100;
+
+            _leaderboardRows.Add(row);
+        }
+
+        private GameObject CreateCircle(Transform parent, float diameter, Color color, string label)
+        {
+            var go = new GameObject("RankBadge", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+            go.GetComponent<Image>().sprite = circleSprite;
+            go.GetComponent<Image>().color = color;
+            var layoutElement = go.AddComponent<LayoutElement>();
+            layoutElement.preferredWidth = diameter;
+            layoutElement.preferredHeight = diameter;
+
+            var text = new GameObject("Label", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            text.transform.SetParent(go.transform, false);
+            var rect = text.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            text.font = rowNameFont;
+            text.fontSize = 24;
+            text.color = UiPalette.Ink;
+            text.text = label;
+            text.alignment = TextAlignmentOptions.Center;
+
+            return go;
         }
 
         private void ClearLeaderboardRows()
@@ -108,16 +184,29 @@ namespace KidQuiz.Presentation
         private void OnEnable()
         {
             playAgainButton.onClick.AddListener(HandlePlayAgain);
+            if (homeButton != null)
+            {
+                homeButton.onClick.AddListener(HandleHome);
+            }
         }
 
         private void OnDisable()
         {
             playAgainButton.onClick.RemoveListener(HandlePlayAgain);
+            if (homeButton != null)
+            {
+                homeButton.onClick.RemoveListener(HandleHome);
+            }
         }
 
         private void HandlePlayAgain()
         {
             _onPlayAgain?.Invoke();
+        }
+
+        private void HandleHome()
+        {
+            _onHome?.Invoke();
         }
     }
 }

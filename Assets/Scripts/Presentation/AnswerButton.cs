@@ -15,11 +15,19 @@ namespace KidQuiz.Presentation
     [RequireComponent(typeof(Button))]
     public sealed class AnswerButton : MonoBehaviour
     {
-        [SerializeField] private TMP_Text label;
-        [SerializeField] private Image background;
-        [SerializeField] private Color neutralColor = Color.white;
-        [SerializeField] private Color correctColor = new(0.35f, 0.75f, 0.35f);
-        [SerializeField] private Color incorrectColor = new(0.85f, 0.35f, 0.35f);
+        private static readonly Color[] BadgeColors =
+        {
+            UiPalette.SkyBlue, UiPalette.Coral, UiPalette.SunYellow, UiPalette.GrassGreen
+        };
+
+        private static readonly string[] BadgeLetters = { "A", "B", "C", "D" };
+
+        [SerializeField] private Image cardBorder;
+        [SerializeField] private Image cardFill;
+        [SerializeField] private Image badgeBorder;
+        [SerializeField] private Image badgeFill;
+        [SerializeField] private TMP_Text badgeLabel;
+        [SerializeField] private TMP_Text answerLabel;
 
         private Button _button;
         private Action<string> _onClick;
@@ -41,22 +49,51 @@ namespace KidQuiz.Presentation
             _button.onClick.RemoveListener(HandleClick);
         }
 
-        public void Bind(string text, Action<string> onClick)
+        public void Bind(string text, Action<string> onClick, int slotIndex)
         {
             AnswerText = text;
             _onClick = onClick;
-            label.text = text;
+            answerLabel.text = text;
+
+            int i = Mathf.Clamp(slotIndex, 0, BadgeColors.Length - 1);
+            badgeFill.color = BadgeColors[i];
+            badgeLabel.text = BadgeLetters[i];
+            badgeLabel.color = Color.white;
+
             SetState(AnswerButtonState.Neutral);
         }
 
         public void SetState(AnswerButtonState state)
         {
-            background.color = state switch
+            switch (state)
             {
-                AnswerButtonState.Correct => correctColor,
-                AnswerButtonState.Incorrect => incorrectColor,
-                _ => neutralColor
-            };
+                case AnswerButtonState.Correct:
+                    cardBorder.color = UiPalette.CorrectBorder;
+                    cardFill.color = UiPalette.Correct;
+                    answerLabel.color = Color.white;
+                    badgeBorder.color = UiPalette.CorrectBorder;
+                    badgeFill.color = Color.white;
+                    badgeLabel.text = "V";
+                    badgeLabel.color = UiPalette.CorrectBorder;
+                    break;
+
+                case AnswerButtonState.Incorrect:
+                    cardBorder.color = UiPalette.IncorrectBorder;
+                    cardFill.color = UiPalette.Incorrect;
+                    answerLabel.color = Color.white;
+                    badgeBorder.color = UiPalette.IncorrectBorder;
+                    badgeFill.color = Color.white;
+                    badgeLabel.text = "X";
+                    badgeLabel.color = UiPalette.IncorrectBorder;
+                    break;
+
+                default:
+                    cardBorder.color = UiPalette.Ink;
+                    cardFill.color = Color.white;
+                    answerLabel.color = UiPalette.Ink;
+                    badgeBorder.color = UiPalette.Ink;
+                    break;
+            }
         }
 
         private void HandleClick()

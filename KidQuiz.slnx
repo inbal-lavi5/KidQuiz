@@ -1,6 +1,6 @@
 ﻿<Solution>
-  <Project Path="KidQuiz.Domain.csproj" />
   <Project Path="KidQuiz.Presentation.csproj" />
+  <Project Path="KidQuiz.Domain.csproj" />
   <Project Path="KidQuiz.Domain.Tests.csproj" />
   <Project Path="KidQuiz.Data.csproj" />
   <Project Path="KidQuiz.Config.csproj" />
