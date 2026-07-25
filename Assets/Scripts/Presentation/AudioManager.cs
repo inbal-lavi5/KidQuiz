@@ -2,13 +2,14 @@ using UnityEngine;
 
 namespace KidQuiz.Presentation
 {
-    // Owns all audio playback and the mute preference. Muted audio doesn't just
-    // play silently - sources check IsMuted before starting playback at all, and
-    // AudioListener.volume is set to 0 as a hard backstop.
+    // Owns all audio playback and the mute state. Muted audio doesn't just
+    // play silently - one-shot sources check IsMuted before starting playback at
+    // all, and AudioListener.volume is set to 0 as a hard backstop. The music
+    // source itself keeps playing while muted; only its audible volume changes,
+    // so unmuting never restarts the loop. Mute state is in-memory only and
+    // always starts unmuted - it is not persisted between sessions.
     public sealed class AudioManager : MonoBehaviour
     {
-        private const string MutedPrefKey = "KidQuiz.SoundMuted";
-
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource sfxSource;
         [SerializeField] private AudioClip backgroundMusic;
@@ -19,21 +20,18 @@ namespace KidQuiz.Presentation
 
         private void Awake()
         {
-            IsMuted = PlayerPrefs.GetInt(MutedPrefKey, 0) == 1;
             ApplyMuteState();
         }
 
         public void ToggleMuted()
         {
             IsMuted = !IsMuted;
-            PlayerPrefs.SetInt(MutedPrefKey, IsMuted ? 1 : 0);
-            PlayerPrefs.Save();
             ApplyMuteState();
         }
 
         public void PlayMusic()
         {
-            if (musicSource == null || backgroundMusic == null || IsMuted)
+            if (musicSource == null || backgroundMusic == null)
             {
                 return;
             }
@@ -47,14 +45,6 @@ namespace KidQuiz.Presentation
             if (!musicSource.isPlaying)
             {
                 musicSource.Play();
-            }
-        }
-
-        public void StopMusic()
-        {
-            if (musicSource != null)
-            {
-                musicSource.Stop();
             }
         }
 
@@ -81,11 +71,6 @@ namespace KidQuiz.Presentation
         private void ApplyMuteState()
         {
             AudioListener.volume = IsMuted ? 0f : 1f;
-
-            if (IsMuted)
-            {
-                StopMusic();
-            }
         }
     }
 }

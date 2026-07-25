@@ -82,7 +82,6 @@ namespace KidQuiz.Presentation
             base.Hide();
             _fetchCts?.Cancel();
             StopActiveRoutine();
-            _audioManager?.StopMusic();
         }
 
         public async void BeginRound(QuizConfig config, string topicLabel, Action<QuizResult> onComplete)
@@ -95,7 +94,6 @@ namespace KidQuiz.Presentation
             scoreText.text = "0";
             ClearAnswerButtons();
             SetLoading(true);
-            _audioManager?.PlayMusic();
 
             _fetchCts?.Cancel();
             _fetchCts = new CancellationTokenSource();

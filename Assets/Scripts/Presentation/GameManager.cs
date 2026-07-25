@@ -60,6 +60,7 @@ namespace KidQuiz.Presentation
             screenManager.Results.Initialize(HandlePlayAgain, HandleGoHome);
             screenManager.Leaderboard.Initialize(HandleGoHome, HandleLeaderboardTopicSelected);
             screenManager.ShowHome();
+            audioManager.PlayMusic();
         }
 
         private void HandleStartRequested(string playerName, Topic topic)
