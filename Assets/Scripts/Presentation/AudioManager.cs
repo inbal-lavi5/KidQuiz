@@ -21,6 +21,7 @@ namespace KidQuiz.Presentation
 
         private void Awake()
         {
+            IsMuted = true;
             ApplyMuteState();
         }
 
