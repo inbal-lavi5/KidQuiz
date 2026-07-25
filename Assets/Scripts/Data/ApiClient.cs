@@ -46,7 +46,7 @@ namespace KidQuiz.Data
     // Awaits UnityWebRequest via TaskCompletionSource, no polling loops.
     public sealed class ApiClient
     {
-        private const int TimeoutSeconds = 10;
+        private const int TimeoutSeconds = 6;
 
         public async Task<ApiResult<T>> GetAsync<T>(string url, CancellationToken ct)
         {
@@ -84,12 +84,15 @@ namespace KidQuiz.Data
             return result.IsSuccess;
         }
 
+        // Only retries on Network errors, which typically fail fast (bad DNS, refused
+        // connection). Retrying a Timeout would mean waiting through two full timeouts
+        // before falling back to offline questions - not worth it for how rarely a
+        // retried request succeeds where the first one didn't.
         private async Task<ApiResult<T>> SendWithRetryAsync<T>(Func<UnityWebRequest> requestFactory, CancellationToken ct, bool expectBody)
         {
             var result = await SendOnceAsync<T>(requestFactory, ct, expectBody);
 
-            bool retryable = result.ErrorKind == ApiErrorKind.Network || result.ErrorKind == ApiErrorKind.Timeout;
-            if (!result.IsSuccess && retryable && !ct.IsCancellationRequested)
+            if (!result.IsSuccess && result.ErrorKind == ApiErrorKind.Network && !ct.IsCancellationRequested)
             {
                 result = await SendOnceAsync<T>(requestFactory, ct, expectBody);
             }

@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questionsPerRound: 5
   secondsPerQuestion: 10
-  basePoints: 100
-  timeBonusMultiplier: 1
   difficulty: 0
   triviaCategoryId: 9

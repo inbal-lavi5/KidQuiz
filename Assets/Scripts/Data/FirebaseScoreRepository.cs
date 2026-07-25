@@ -13,7 +13,9 @@ namespace KidQuiz.Data
     // On submit, the existing entries for that category are re-read, combined with the
     // new one, and anything outside the top 10 is deleted - so a category never grows
     // past MaxEntriesPerCategory stored entries.
-    public sealed class FirebaseScoreRepository : IScoreRepository
+    // Boundary implementation, referenced directly by GameManager - no interface,
+    // since Firebase is the only score backend the game has or needs.
+    public sealed class FirebaseScoreRepository
     {
         private const int MaxEntriesPerCategory = 10;
 

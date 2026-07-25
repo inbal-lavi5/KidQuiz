@@ -153,7 +153,7 @@ namespace KidQuiz.Presentation
             }
             if (categoryText != null)
             {
-                categoryText.text = (_topicLabel ?? question.Difficulty.ToString()).ToUpperInvariant();
+                categoryText.text = _topicLabel.ToUpperInvariant();
             }
 
             int slotIndex = 0;

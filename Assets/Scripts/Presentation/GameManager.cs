@@ -23,9 +23,8 @@ namespace KidQuiz.Presentation
         private const int LeaderboardSize = 10;
 
         private IQuestionProvider _questionProvider;
-        private IScoreRepository _scoreRepository;
+        private FirebaseScoreRepository _scoreRepository;
         private string _playerName;
-        private QuizConfig _lastConfig;
         private Topic _lastTopic;
 
         private void Awake()
@@ -67,14 +66,13 @@ namespace KidQuiz.Presentation
         {
             _playerName = playerName;
             _lastTopic = topic;
-            _lastConfig = SelectConfig(topic);
-            BeginRound(_lastConfig, _lastTopic);
+            BeginRound(topic);
         }
 
-        private void BeginRound(QuizConfig config, Topic topic)
+        private void BeginRound(Topic topic)
         {
             screenManager.ShowQuiz();
-            screenManager.Quiz.BeginRound(config, TopicLabel(topic), HandleRoundComplete);
+            screenManager.Quiz.BeginRound(SelectConfig(topic), TopicLabel(topic), HandleRoundComplete);
         }
 
         private void HandleQuizExit()
@@ -105,7 +103,7 @@ namespace KidQuiz.Presentation
 
         private void HandlePlayAgain()
         {
-            BeginRound(_lastConfig, _lastTopic);
+            BeginRound(_lastTopic);
         }
 
         private void HandleGoHome()

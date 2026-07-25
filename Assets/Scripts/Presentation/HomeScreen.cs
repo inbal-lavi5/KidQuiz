@@ -47,7 +47,6 @@ namespace KidQuiz.Presentation
         public override void Show()
         {
             base.Show();
-            // SelectTopic(Topic.Science);
             UpdateStartButtonState();
         }
 
@@ -96,19 +95,17 @@ namespace KidQuiz.Presentation
             if (scienceSelectionRing != null)
             {
                 scienceSelectionRing.SetActive(topic == Topic.Science);
-                _audioManager.PlayButton();
-
             }
             if (generalKnowledgeSelectionRing != null)
             {
                 generalKnowledgeSelectionRing.SetActive(topic == Topic.GeneralKnowledge);
-                _audioManager.PlayButton();
             }
             if (mathSelectionRing != null)
             {
                 mathSelectionRing.SetActive(topic == Topic.Math);
-                _audioManager.PlayButton();
             }
+
+            _audioManager.PlayButton();
         }
 
         private void HandleNameChanged(string value)
@@ -134,7 +131,7 @@ namespace KidQuiz.Presentation
             {
                 return;
             }
-            
+
             _audioManager.PlayButton();
             _onStart?.Invoke(playerName, _selectedTopic);
         }
