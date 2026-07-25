@@ -1,0 +1,205 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using KidQuiz.Config;
+using KidQuiz.Domain;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace KidQuiz.Presentation
+{
+    public sealed class QuizScreen : UiScreen
+    {
+        [SerializeField] private TMP_Text questionText;
+        [SerializeField] private TMP_Text scoreText;
+        [SerializeField] private Image timerFill;
+        [SerializeField] private Transform answerButtonParent;
+        [SerializeField] private AnswerButton answerButtonPrefab;
+        [SerializeField] private float feedbackDelaySeconds = 1.2f;
+
+        private ObjectPool<AnswerButton> _buttonPool;
+        private readonly List<AnswerButton> _activeButtons = new();
+
+        private IQuestionProvider _questionProvider;
+        private QuizConfig _config;
+        private Action<QuizResult> _onComplete;
+
+        private QuizSession _session;
+        private CancellationTokenSource _fetchCts;
+        private Coroutine _activeRoutine;
+        private bool _acceptingAnswers;
+        private float _questionStartTime;
+        private int _correctCount;
+
+        private void Awake()
+        {
+            _buttonPool = new ObjectPool<AnswerButton>(answerButtonPrefab, answerButtonParent, prewarmCount: 4);
+        }
+
+        public void Initialize(IQuestionProvider questionProvider)
+        {
+            _questionProvider = questionProvider;
+        }
+
+        public override void Hide()
+        {
+            base.Hide();
+            _fetchCts?.Cancel();
+            StopActiveRoutine();
+        }
+
+        public async void BeginRound(QuizConfig config, Action<QuizResult> onComplete)
+        {
+            _config = config;
+            _onComplete = onComplete;
+            _correctCount = 0;
+            scoreText.text = "0";
+            questionText.text = "Loading...";
+            ClearAnswerButtons();
+
+            _fetchCts?.Cancel();
+            _fetchCts = new CancellationTokenSource();
+            CancellationToken ct = _fetchCts.Token;
+
+            IReadOnlyList<Question> questions = await _questionProvider.FetchAsync(config.ToRoundSettings(), ct);
+
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if (questions == null || questions.Count == 0)
+            {
+                questionText.text = "No questions available. Please try again.";
+                return;
+            }
+
+            _session = new QuizSession(questions, config.SecondsPerQuestion);
+            ShowCurrentQuestion();
+        }
+
+        private void ShowCurrentQuestion()
+        {
+            ClearAnswerButtons();
+
+            Question question = _session.CurrentQuestion;
+            questionText.text = question.Prompt;
+
+            foreach (string option in question.Options)
+            {
+                AnswerButton button = _buttonPool.Get();
+                button.Bind(option, HandleAnswerSelected);
+                _activeButtons.Add(button);
+            }
+
+            _acceptingAnswers = true;
+            _questionStartTime = Time.time;
+
+            StopActiveRoutine();
+            _activeRoutine = StartCoroutine(RunTimer());
+        }
+
+        private IEnumerator RunTimer()
+        {
+            float duration = _config.SecondsPerQuestion;
+            float elapsed = 0f;
+
+            while (elapsed < duration && _acceptingAnswers)
+            {
+                elapsed += Time.deltaTime;
+                if (timerFill != null)
+                {
+                    timerFill.fillAmount = 1f - Mathf.Clamp01(elapsed / duration);
+                }
+                yield return null;
+            }
+
+            if (_acceptingAnswers)
+            {
+                HandleAnswerSelected(null);
+            }
+        }
+
+        private void HandleAnswerSelected(string answer)
+        {
+            if (!_acceptingAnswers)
+            {
+                return;
+            }
+
+            _acceptingAnswers = false;
+
+            float secondsRemaining = Mathf.Max(0f, _config.SecondsPerQuestion - (Time.time - _questionStartTime));
+            AnswerResult result = _session.Submit(answer, secondsRemaining);
+
+            if (result.WasCorrect)
+            {
+                _correctCount++;
+            }
+
+            scoreText.text = _session.Score.ToString();
+            ShowAnswerFeedback(answer, result);
+
+            StopActiveRoutine();
+            _activeRoutine = StartCoroutine(AdvanceAfterDelay());
+        }
+
+        private void ShowAnswerFeedback(string selectedAnswer, AnswerResult result)
+        {
+            foreach (AnswerButton button in _activeButtons)
+            {
+                if (button.AnswerText == result.CorrectAnswer)
+                {
+                    button.SetState(AnswerButtonState.Correct);
+                }
+                else if (button.AnswerText == selectedAnswer)
+                {
+                    button.SetState(AnswerButtonState.Incorrect);
+                }
+            }
+        }
+
+        private IEnumerator AdvanceAfterDelay()
+        {
+            yield return new WaitForSeconds(feedbackDelaySeconds);
+
+            _session.Advance();
+
+            if (_session.IsComplete)
+            {
+                CompleteRound();
+            }
+            else
+            {
+                ShowCurrentQuestion();
+            }
+        }
+
+        private void CompleteRound()
+        {
+            ClearAnswerButtons();
+            var result = new QuizResult(_session.Score, _correctCount, _config.QuestionsPerRound);
+            _onComplete?.Invoke(result);
+        }
+
+        private void ClearAnswerButtons()
+        {
+            foreach (AnswerButton button in _activeButtons)
+            {
+                _buttonPool.Release(button);
+            }
+            _activeButtons.Clear();
+        }
+
+        private void StopActiveRoutine()
+        {
+            if (_activeRoutine != null)
+            {
+                StopCoroutine(_activeRoutine);
+                _activeRoutine = null;
+            }
+        }
+    }
+}
