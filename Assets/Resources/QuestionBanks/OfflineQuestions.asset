@@ -1,0 +1,120 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e6c29f850ac98f41a4eea9dcf9ef67d, type: 3}
+  m_Name: OfflineQuestions
+  m_EditorClassIdentifier: KidQuiz.Data::KidQuiz.Data.QuestionBank
+  entries:
+  - prompt: What color is the sky on a clear day?
+    correctAnswer: Blue
+    incorrectAnswers:
+    - Green
+    - Purple
+    - Orange
+    difficulty: 0
+  - prompt: How many legs does a dog have?
+    correctAnswer: 4
+    incorrectAnswers:
+    - 2
+    - 6
+    - 8
+    difficulty: 0
+  - prompt: What do bees make?
+    correctAnswer: Honey
+    incorrectAnswers:
+    - Milk
+    - Bread
+    - Juice
+    difficulty: 0
+  - prompt: What is the opposite of hot?
+    correctAnswer: Cold
+    incorrectAnswers:
+    - Wet
+    - Loud
+    - Fast
+    difficulty: 0
+  - prompt: Which animal says "moo"?
+    correctAnswer: Cow
+    incorrectAnswers:
+    - Cat
+    - Dog
+    - Duck
+    difficulty: 0
+  - prompt: How many days are in a week?
+    correctAnswer: 7
+    incorrectAnswers:
+    - 5
+    - 10
+    - 30
+    difficulty: 1
+  - prompt: What planet do we live on?
+    correctAnswer: Earth
+    incorrectAnswers:
+    - Mars
+    - Jupiter
+    - Venus
+    difficulty: 1
+  - prompt: What is the largest ocean on Earth?
+    correctAnswer: Pacific Ocean
+    incorrectAnswers:
+    - Atlantic Ocean
+    - Indian Ocean
+    - Arctic Ocean
+    difficulty: 1
+  - prompt: Which shape has three sides?
+    correctAnswer: Triangle
+    incorrectAnswers:
+    - Square
+    - Circle
+    - Hexagon
+    difficulty: 1
+  - prompt: What gas do plants breathe in to grow?
+    correctAnswer: Carbon dioxide
+    incorrectAnswers:
+    - Oxygen
+    - Nitrogen
+    - Helium
+    difficulty: 1
+  - prompt: What is the capital city of France?
+    correctAnswer: Paris
+    incorrectAnswers:
+    - London
+    - Berlin
+    - Rome
+    difficulty: 2
+  - prompt: How many continents are there on Earth?
+    correctAnswer: 7
+    incorrectAnswers:
+    - 5
+    - 6
+    - 9
+    difficulty: 2
+  - prompt: What is the chemical symbol for water?
+    correctAnswer: H2O
+    incorrectAnswers:
+    - CO2
+    - O2
+    - NaCl
+    difficulty: 2
+  - prompt: Who wrote the play Romeo and Juliet?
+    correctAnswer: William Shakespeare
+    incorrectAnswers:
+    - Charles Dickens
+    - Mark Twain
+    - Jane Austen
+    difficulty: 2
+  - prompt: What is the smallest planet in our solar system?
+    correctAnswer: Mercury
+    incorrectAnswers:
+    - Mars
+    - Pluto
+    - Venus
+    difficulty: 2

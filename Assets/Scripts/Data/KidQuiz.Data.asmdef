@@ -1,0 +1,17 @@
+{
+    "name": "KidQuiz.Data",
+    "rootNamespace": "KidQuiz.Data",
+    "references": [
+        "KidQuiz.Domain",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -19,5 +19,10 @@ namespace KidQuiz.Config
         public float TimeBonusMultiplier => timeBonusMultiplier;
         public Difficulty Difficulty => difficulty;
         public int TriviaCategoryId => triviaCategoryId;
+
+        public QuizRoundSettings ToRoundSettings()
+        {
+            return new QuizRoundSettings(questionsPerRound, difficulty, triviaCategoryId);
+        }
     }
 }
