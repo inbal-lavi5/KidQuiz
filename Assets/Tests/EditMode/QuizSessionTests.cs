@@ -17,7 +17,6 @@ namespace KidQuiz.Domain.Tests
                 questions.Add(new Question(
                     $"q{i}",
                     $"Question {i}",
-                    Difficulty.Easy,
                     "Correct",
                     new[] { "Wrong1", "Wrong2", "Wrong3" },
                     randomizer));
@@ -37,7 +36,7 @@ namespace KidQuiz.Domain.Tests
                 session.Advance();
             }
 
-            int perQuestionScore = ScoringRules.CalculatePoints(true, Difficulty.Easy, SecondsPerQuestion, SecondsPerQuestion);
+            int perQuestionScore = ScoringRules.CalculatePoints(true, SecondsPerQuestion, SecondsPerQuestion);
             Assert.AreEqual(perQuestionScore * 10, session.Score);
             Assert.AreEqual(10, session.QuestionsAnswered);
             Assert.IsTrue(session.IsComplete);
@@ -52,7 +51,7 @@ namespace KidQuiz.Domain.Tests
             var first = session.Submit("Correct", SecondsPerQuestion);
             var second = session.Submit("Correct", SecondsPerQuestion);
 
-            int expectedPoints = ScoringRules.CalculatePoints(true, Difficulty.Easy, SecondsPerQuestion, SecondsPerQuestion);
+            int expectedPoints = ScoringRules.CalculatePoints(true, SecondsPerQuestion, SecondsPerQuestion);
             Assert.AreEqual(expectedPoints, first.PointsAwarded);
             Assert.AreEqual(0, second.PointsAwarded);
             Assert.AreEqual(expectedPoints, session.Score);

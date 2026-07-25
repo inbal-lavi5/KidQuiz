@@ -21,7 +21,7 @@ namespace KidQuiz.Data
         public Task<IReadOnlyList<Question>> FetchAsync(QuizRoundSettings settings, CancellationToken ct)
         {
             List<QuestionBank.Entry> pool = _bank.Entries
-                .Where(entry => entry.difficulty == settings.Difficulty)
+                .Where(entry => entry.categoryId == settings.CategoryId)
                 .ToList();
 
             if (pool.Count == 0)
@@ -40,7 +40,6 @@ namespace KidQuiz.Data
                 questions.Add(new Question(
                     Guid.NewGuid().ToString(),
                     entry.prompt,
-                    entry.difficulty,
                     entry.correctAnswer,
                     entry.incorrectAnswers,
                     _randomizer));

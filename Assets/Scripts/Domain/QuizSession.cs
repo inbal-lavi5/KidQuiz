@@ -45,7 +45,7 @@ namespace KidQuiz.Domain
             _answered[_currentIndex] = true;
             QuestionsAnswered++;
 
-            int points = ScoringRules.CalculatePoints(wasCorrect, question.Difficulty, secondsRemaining, _secondsPerQuestion);
+            int points = ScoringRules.CalculatePoints(wasCorrect, secondsRemaining, _secondsPerQuestion);
             Score += points;
 
             return new AnswerResult(wasCorrect, points, question.CorrectAnswer);

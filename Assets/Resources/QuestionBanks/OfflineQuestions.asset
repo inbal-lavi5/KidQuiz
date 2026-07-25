@@ -19,102 +19,249 @@ MonoBehaviour:
     - Green
     - Purple
     - Orange
-    difficulty: 0
-  - prompt: How many legs does a dog have?
-    correctAnswer: 4
-    incorrectAnswers:
-    - 2
-    - 6
-    - 8
-    difficulty: 0
+    categoryId: 17
   - prompt: What do bees make?
     correctAnswer: Honey
     incorrectAnswers:
     - Milk
     - Bread
     - Juice
-    difficulty: 0
-  - prompt: What is the opposite of hot?
-    correctAnswer: Cold
-    incorrectAnswers:
-    - Wet
-    - Loud
-    - Fast
-    difficulty: 0
-  - prompt: Which animal says "moo"?
-    correctAnswer: Cow
-    incorrectAnswers:
-    - Cat
-    - Dog
-    - Duck
-    difficulty: 0
-  - prompt: How many days are in a week?
-    correctAnswer: 7
-    incorrectAnswers:
-    - 5
-    - 10
-    - 30
-    difficulty: 1
+    categoryId: 17
   - prompt: What planet do we live on?
     correctAnswer: Earth
     incorrectAnswers:
     - Mars
     - Jupiter
     - Venus
-    difficulty: 1
-  - prompt: What is the largest ocean on Earth?
-    correctAnswer: Pacific Ocean
-    incorrectAnswers:
-    - Atlantic Ocean
-    - Indian Ocean
-    - Arctic Ocean
-    difficulty: 1
-  - prompt: Which shape has three sides?
-    correctAnswer: Triangle
-    incorrectAnswers:
-    - Square
-    - Circle
-    - Hexagon
-    difficulty: 1
+    categoryId: 17
   - prompt: What gas do plants breathe in to grow?
     correctAnswer: Carbon dioxide
     incorrectAnswers:
     - Oxygen
     - Nitrogen
     - Helium
-    difficulty: 1
-  - prompt: What is the capital city of France?
-    correctAnswer: Paris
-    incorrectAnswers:
-    - London
-    - Berlin
-    - Rome
-    difficulty: 2
-  - prompt: How many continents are there on Earth?
-    correctAnswer: 7
-    incorrectAnswers:
-    - 5
-    - 6
-    - 9
-    difficulty: 2
+    categoryId: 17
   - prompt: What is the chemical symbol for water?
     correctAnswer: H2O
     incorrectAnswers:
     - CO2
     - O2
     - NaCl
-    difficulty: 2
-  - prompt: Who wrote the play Romeo and Juliet?
-    correctAnswer: William Shakespeare
-    incorrectAnswers:
-    - Charles Dickens
-    - Mark Twain
-    - Jane Austen
-    difficulty: 2
+    categoryId: 17
   - prompt: What is the smallest planet in our solar system?
     correctAnswer: Mercury
     incorrectAnswers:
     - Mars
     - Pluto
     - Venus
-    difficulty: 2
+    categoryId: 17
+  - prompt: How many legs does a spider have?
+    correctAnswer: 8
+    incorrectAnswers:
+    - 6
+    - 4
+    - 10
+    categoryId: 17
+  - prompt: What do caterpillars turn into?
+    correctAnswer: Butterflies
+    incorrectAnswers:
+    - Birds
+    - Bees
+    - Frogs
+    categoryId: 17
+  - prompt: Which body part do you use to hear sounds?
+    correctAnswer: Ears
+    incorrectAnswers:
+    - Eyes
+    - Nose
+    - Skin
+    categoryId: 17
+  - prompt: What is the closest star to Earth?
+    correctAnswer: The Sun
+    incorrectAnswers:
+    - The Moon
+    - Mars
+    - Polaris
+    categoryId: 17
+  - prompt: What do we call water that has frozen solid?
+    correctAnswer: Ice
+    incorrectAnswers:
+    - Steam
+    - Fog
+    - Rain
+    categoryId: 17
+  - prompt: Which part of a plant soaks up water from the soil?
+    correctAnswer: Roots
+    incorrectAnswers:
+    - Leaves
+    - Petals
+    - Stem
+    categoryId: 17
+  - prompt: What is the opposite of hot?
+    correctAnswer: Cold
+    incorrectAnswers:
+    - Wet
+    - Loud
+    - Fast
+    categoryId: 9
+  - prompt: Which animal says "moo"?
+    correctAnswer: Cow
+    incorrectAnswers:
+    - Cat
+    - Dog
+    - Duck
+    categoryId: 9
+  - prompt: How many days are in a week?
+    correctAnswer: 7
+    incorrectAnswers:
+    - 5
+    - 10
+    - 30
+    categoryId: 9
+  - prompt: What is the capital city of France?
+    correctAnswer: Paris
+    incorrectAnswers:
+    - London
+    - Berlin
+    - Rome
+    categoryId: 9
+  - prompt: How many continents are there on Earth?
+    correctAnswer: 7
+    incorrectAnswers:
+    - 5
+    - 6
+    - 9
+    categoryId: 9
+  - prompt: Who wrote the play Romeo and Juliet?
+    correctAnswer: William Shakespeare
+    incorrectAnswers:
+    - Charles Dickens
+    - Mark Twain
+    - Jane Austen
+    categoryId: 9
+  - prompt: What do you call a baby dog?
+    correctAnswer: Puppy
+    incorrectAnswers:
+    - Kitten
+    - Cub
+    - Calf
+    categoryId: 9
+  - prompt: What color do you get when you mix blue and yellow?
+    correctAnswer: Green
+    incorrectAnswers:
+    - Purple
+    - Orange
+    - Brown
+    categoryId: 9
+  - prompt: Which meal do people usually eat in the morning?
+    correctAnswer: Breakfast
+    incorrectAnswers:
+    - Lunch
+    - Dinner
+    - Dessert
+    categoryId: 9
+  - prompt: How many months are in a year?
+    correctAnswer: 12
+    incorrectAnswers:
+    - 10
+    - 6
+    - 24
+    categoryId: 9
+  - prompt: What do you use to write on paper?
+    correctAnswer: Pen
+    incorrectAnswers:
+    - Fork
+    - Spoon
+    - Comb
+    categoryId: 9
+  - prompt: Which season comes right after winter?
+    correctAnswer: Spring
+    incorrectAnswers:
+    - Summer
+    - Autumn
+    - Rainy season
+    categoryId: 9
+  - prompt: How many legs does a dog have?
+    correctAnswer: 4
+    incorrectAnswers:
+    - 2
+    - 6
+    - 8
+    categoryId: 19
+  - prompt: Which shape has three sides?
+    correctAnswer: Triangle
+    incorrectAnswers:
+    - Square
+    - Circle
+    - Hexagon
+    categoryId: 19
+  - prompt: What is 2 + 2?
+    correctAnswer: 4
+    incorrectAnswers:
+    - 3
+    - 5
+    - 6
+    categoryId: 19
+  - prompt: What is 10 - 4?
+    correctAnswer: 6
+    incorrectAnswers:
+    - 5
+    - 7
+    - 8
+    categoryId: 19
+  - prompt: How many sides does a square have?
+    correctAnswer: 4
+    incorrectAnswers:
+    - 3
+    - 5
+    - 6
+    categoryId: 19
+  - prompt: What number comes right after 9?
+    correctAnswer: 10
+    incorrectAnswers:
+    - 8
+    - 11
+    - 12
+    categoryId: 19
+  - prompt: What is 3 x 3?
+    correctAnswer: 9
+    incorrectAnswers:
+    - 6
+    - 12
+    - 8
+    categoryId: 19
+  - prompt: How many minutes are in an hour?
+    correctAnswer: 60
+    incorrectAnswers:
+    - 30
+    - 100
+    - 12
+    categoryId: 19
+  - prompt: What is half of 10?
+    correctAnswer: 5
+    incorrectAnswers:
+    - 4
+    - 6
+    - 2
+    categoryId: 19
+  - prompt: What is 5 + 6?
+    correctAnswer: 11
+    incorrectAnswers:
+    - 10
+    - 12
+    - 9
+    categoryId: 19
+  - prompt: How many sides does a hexagon have?
+    correctAnswer: 6
+    incorrectAnswers:
+    - 4
+    - 5
+    - 8
+    categoryId: 19
+  - prompt: How many corners does a rectangle have?
+    correctAnswer: 4
+    incorrectAnswers:
+    - 3
+    - 5
+    - 6
+    categoryId: 19

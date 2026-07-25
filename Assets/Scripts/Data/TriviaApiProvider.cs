@@ -25,8 +25,8 @@ namespace KidQuiz.Data
 
         public async Task<IReadOnlyList<Question>> FetchAsync(QuizRoundSettings settings, CancellationToken ct)
         {
-            string difficultyParam = settings.Difficulty.ToString().ToLowerInvariant();
-            string url = $"{BaseUrl}?amount={settings.QuestionCount}&category={settings.CategoryId}&difficulty={difficultyParam}&type=multiple";
+            // Every topic in this kids' game is Easy - see QuizConfig assets under Resources/Configs.
+            string url = $"{BaseUrl}?amount={settings.QuestionCount}&category={settings.CategoryId}&difficulty=easy&type=multiple";
 
             ApiResult<TriviaResponseDto> result = await _apiClient.GetAsync<TriviaResponseDto>(url, ct);
 
@@ -41,28 +41,16 @@ namespace KidQuiz.Data
                 string prompt = WebUtility.HtmlDecode(dto.question);
                 string correctAnswer = WebUtility.HtmlDecode(dto.correct_answer);
                 List<string> incorrectAnswers = dto.incorrect_answers.Select(WebUtility.HtmlDecode).ToList();
-                Difficulty difficulty = ParseDifficulty(dto.difficulty);
 
                 questions.Add(new Question(
                     Guid.NewGuid().ToString(),
                     prompt,
-                    difficulty,
                     correctAnswer,
                     incorrectAnswers,
                     _randomizer));
             }
 
             return questions;
-        }
-
-        private static Difficulty ParseDifficulty(string value)
-        {
-            return value?.ToLowerInvariant() switch
-            {
-                "medium" => Difficulty.Medium,
-                "hard" => Difficulty.Hard,
-                _ => Difficulty.Easy
-            };
         }
     }
 }

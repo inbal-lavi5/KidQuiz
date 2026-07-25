@@ -7,7 +7,6 @@ namespace KidQuiz.Domain
     {
         public string Id { get; }
         public string Prompt { get; }
-        public Difficulty Difficulty { get; }
         public IReadOnlyList<string> Options { get; }
         public string CorrectAnswer => _correctAnswer;
 
@@ -16,14 +15,12 @@ namespace KidQuiz.Domain
         public Question(
             string id,
             string prompt,
-            Difficulty difficulty,
             string correctAnswer,
             IReadOnlyList<string> incorrectAnswers,
             IRandomizer randomizer)
         {
             Id = id;
             Prompt = prompt;
-            Difficulty = difficulty;
             _correctAnswer = correctAnswer;
 
             var options = new List<string>(incorrectAnswers.Count + 1) { correctAnswer };

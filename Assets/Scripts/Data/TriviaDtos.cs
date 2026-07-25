@@ -10,9 +10,6 @@ namespace KidQuiz.Data
 
     internal sealed class TriviaQuestionDto
     {
-        public string category;
-        public string type;
-        public string difficulty;
         public string question;
         public string correct_answer;
         public List<string> incorrect_answers;

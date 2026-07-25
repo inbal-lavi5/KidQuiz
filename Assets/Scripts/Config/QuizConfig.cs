@@ -8,7 +8,6 @@ namespace KidQuiz.Config
     {
         [SerializeField] private int questionsPerRound = 10;
         [SerializeField] private float secondsPerQuestion = 20f;
-        [SerializeField] private Difficulty difficulty = Difficulty.Easy;
         [SerializeField] private int triviaCategoryId = 9;
 
         public int QuestionsPerRound => questionsPerRound;
@@ -16,7 +15,7 @@ namespace KidQuiz.Config
 
         public QuizRoundSettings ToRoundSettings()
         {
-            return new QuizRoundSettings(questionsPerRound, difficulty, triviaCategoryId);
+            return new QuizRoundSettings(questionsPerRound, triviaCategoryId);
         }
     }
 }

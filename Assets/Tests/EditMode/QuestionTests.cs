@@ -10,7 +10,6 @@ namespace KidQuiz.Domain.Tests
             return new Question(
                 "q1",
                 "What color is the sky?",
-                Difficulty.Easy,
                 correctAnswer,
                 new[] { "Red", "Green", "Yellow" },
                 new FakeRandomizer());
