@@ -56,7 +56,7 @@ namespace KidQuiz.Presentation
             screenManager.Home.Initialize(HandleStartRequested, HandleViewLeaderboard);
             screenManager.Quiz.Initialize(_questionProvider, HandleQuizExit);
             screenManager.Results.Initialize(HandlePlayAgain, HandleGoHome);
-            screenManager.Leaderboard.Initialize(HandleGoHome);
+            screenManager.Leaderboard.Initialize(HandleGoHome, HandleLeaderboardTopicSelected);
             screenManager.ShowHome();
         }
 
@@ -90,11 +90,12 @@ namespace KidQuiz.Presentation
                 return;
             }
 
-            var entry = new ScoreEntry(_playerName, result.Score, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            string category = TopicLabel(_lastTopic);
+            var entry = new ScoreEntry(_playerName, result.Score, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), category);
             using var cts = new CancellationTokenSource();
 
             await _scoreRepository.SubmitAsync(entry, cts.Token);
-            var topScores = await _scoreRepository.GetTopAsync(LeaderboardSize, cts.Token);
+            var topScores = await _scoreRepository.GetTopAsync(category, LeaderboardSize, cts.Token);
 
             screenManager.Results.ShowLeaderboardLoaded(topScores);
         }
@@ -109,9 +110,14 @@ namespace KidQuiz.Presentation
             screenManager.ShowHome();
         }
 
-        private async void HandleViewLeaderboard()
+        private void HandleViewLeaderboard()
         {
             screenManager.ShowLeaderboard();
+            screenManager.Leaderboard.SelectTopic(_lastTopic);
+        }
+
+        private async void HandleLeaderboardTopicSelected(Topic topic)
+        {
             screenManager.Leaderboard.ShowLoading();
 
             if (_scoreRepository == null)
@@ -121,7 +127,7 @@ namespace KidQuiz.Presentation
             }
 
             using var cts = new CancellationTokenSource();
-            var topScores = await _scoreRepository.GetTopAsync(LeaderboardSize, cts.Token);
+            var topScores = await _scoreRepository.GetTopAsync(TopicLabel(topic), LeaderboardSize, cts.Token);
             screenManager.Leaderboard.ShowLoaded(topScores);
         }
 

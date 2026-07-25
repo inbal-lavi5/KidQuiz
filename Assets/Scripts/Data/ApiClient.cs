@@ -78,6 +78,12 @@ namespace KidQuiz.Data
             return result.IsSuccess;
         }
 
+        public async Task<bool> DeleteAsync(string url, CancellationToken ct)
+        {
+            var result = await SendWithRetryAsync<object>(() => UnityWebRequest.Delete(url), ct, expectBody: false);
+            return result.IsSuccess;
+        }
+
         private async Task<ApiResult<T>> SendWithRetryAsync<T>(Func<UnityWebRequest> requestFactory, CancellationToken ct, bool expectBody)
         {
             var result = await SendOnceAsync<T>(requestFactory, ct, expectBody);

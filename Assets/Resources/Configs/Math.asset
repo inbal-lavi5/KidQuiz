@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c5a69b906d31f438851fb2bf9731d7, type: 3}
   m_Name: Math
   m_EditorClassIdentifier: 
-  questionsPerRound: 10
+  questionsPerRound: 1
   secondsPerQuestion: 10
   basePoints: 100
   timeBonusMultiplier: 1

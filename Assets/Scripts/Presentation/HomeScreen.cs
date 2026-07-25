@@ -7,6 +7,8 @@ namespace KidQuiz.Presentation
 {
     public sealed class HomeScreen : UiScreen
     {
+        private const string SoundMutedPrefKey = "KidQuiz.SoundMuted";
+
         [SerializeField] private TMP_InputField playerNameInput;
         [SerializeField] private Button scienceButton;
         [SerializeField] private Button generalKnowledgeButton;
@@ -16,10 +18,20 @@ namespace KidQuiz.Presentation
         [SerializeField] private GameObject mathSelectionRing;
         [SerializeField] private Button startButton;
         [SerializeField] private Button leaderboardButton;
+        [SerializeField] private Button soundToggleButton;
+        [SerializeField] private Image soundToggleFill;
+        [SerializeField] private TMP_Text soundToggleLabel;
 
         private Topic _selectedTopic = Topic.Science;
+        private bool _isMuted;
         private Action<string, Topic> _onStart;
         private Action _onViewLeaderboard;
+
+        private void Awake()
+        {
+            _isMuted = PlayerPrefs.GetInt(SoundMutedPrefKey, 0) == 1;
+            ApplyMuteState();
+        }
 
         public void Initialize(Action<string, Topic> onStart, Action onViewLeaderboard)
         {
@@ -31,6 +43,7 @@ namespace KidQuiz.Presentation
         {
             base.Show();
             SelectTopic(Topic.Science);
+            UpdateStartButtonState();
         }
 
         private void OnEnable()
@@ -39,9 +52,14 @@ namespace KidQuiz.Presentation
             generalKnowledgeButton.onClick.AddListener(HandleGeneralKnowledgeClicked);
             mathButton.onClick.AddListener(HandleMathClicked);
             startButton.onClick.AddListener(HandleStart);
+            playerNameInput.onValueChanged.AddListener(HandleNameChanged);
             if (leaderboardButton != null)
             {
                 leaderboardButton.onClick.AddListener(HandleViewLeaderboard);
+            }
+            if (soundToggleButton != null)
+            {
+                soundToggleButton.onClick.AddListener(HandleSoundToggle);
             }
         }
 
@@ -51,9 +69,14 @@ namespace KidQuiz.Presentation
             generalKnowledgeButton.onClick.RemoveListener(HandleGeneralKnowledgeClicked);
             mathButton.onClick.RemoveListener(HandleMathClicked);
             startButton.onClick.RemoveListener(HandleStart);
+            playerNameInput.onValueChanged.RemoveListener(HandleNameChanged);
             if (leaderboardButton != null)
             {
                 leaderboardButton.onClick.RemoveListener(HandleViewLeaderboard);
+            }
+            if (soundToggleButton != null)
+            {
+                soundToggleButton.onClick.RemoveListener(HandleSoundToggle);
             }
         }
 
@@ -79,11 +102,23 @@ namespace KidQuiz.Presentation
             }
         }
 
+        private void HandleNameChanged(string value)
+        {
+            UpdateStartButtonState();
+        }
+
+        private void UpdateStartButtonState()
+        {
+            startButton.interactable = !string.IsNullOrWhiteSpace(playerNameInput.text);
+        }
+
         private void HandleStart()
         {
-            string playerName = string.IsNullOrWhiteSpace(playerNameInput.text)
-                ? "Player"
-                : playerNameInput.text.Trim();
+            string playerName = playerNameInput.text.Trim();
+            if (string.IsNullOrEmpty(playerName))
+            {
+                return;
+            }
 
             _onStart?.Invoke(playerName, _selectedTopic);
         }
@@ -91,6 +126,28 @@ namespace KidQuiz.Presentation
         private void HandleViewLeaderboard()
         {
             _onViewLeaderboard?.Invoke();
+        }
+
+        private void HandleSoundToggle()
+        {
+            _isMuted = !_isMuted;
+            PlayerPrefs.SetInt(SoundMutedPrefKey, _isMuted ? 1 : 0);
+            PlayerPrefs.Save();
+            ApplyMuteState();
+        }
+
+        private void ApplyMuteState()
+        {
+            AudioListener.volume = _isMuted ? 0f : 1f;
+
+            if (soundToggleFill != null)
+            {
+                soundToggleFill.color = _isMuted ? UiPalette.Silver : UiPalette.SkyBlue;
+            }
+            if (soundToggleLabel != null)
+            {
+                soundToggleLabel.text = _isMuted ? "OFF" : "ON";
+            }
         }
     }
 }

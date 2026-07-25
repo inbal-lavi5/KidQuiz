@@ -131,6 +131,10 @@ namespace KidQuiz.Presentation
             {
                 answerButtonContainer.SetActive(!isLoading);
             }
+            if (isLoading && timerFillRect != null)
+            {
+                timerFillRect.anchorMax = new Vector2(0f, timerFillRect.anchorMax.y);
+            }
         }
 
         private void ShowCurrentQuestion()
