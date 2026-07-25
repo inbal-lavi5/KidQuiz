@@ -14,9 +14,9 @@ namespace KidQuiz.Presentation
         public static GameManager Instance { get; private set; }
 
         [SerializeField] private ScreenManager screenManager;
-        [SerializeField] private QuizConfig easyConfig;
-        [SerializeField] private QuizConfig mediumConfig;
-        [SerializeField] private QuizConfig hardConfig;
+        [SerializeField] private QuizConfig scienceConfig;
+        [SerializeField] private QuizConfig generalKnowledgeConfig;
+        [SerializeField] private QuizConfig mathConfig;
         [SerializeField] private QuestionBank offlineQuestionBank;
 
         private const int LeaderboardSize = 10;
@@ -25,6 +25,7 @@ namespace KidQuiz.Presentation
         private IScoreRepository _scoreRepository;
         private string _playerName;
         private QuizConfig _lastConfig;
+        private Topic _lastTopic;
 
         private void Awake()
         {
@@ -52,23 +53,25 @@ namespace KidQuiz.Presentation
 
         private void Start()
         {
-            screenManager.Home.Initialize(HandleStartRequested);
+            screenManager.Home.Initialize(HandleStartRequested, HandleViewLeaderboard);
             screenManager.Quiz.Initialize(_questionProvider, HandleQuizExit);
             screenManager.Results.Initialize(HandlePlayAgain, HandleGoHome);
+            screenManager.Leaderboard.Initialize(HandleGoHome);
             screenManager.ShowHome();
         }
 
-        private void HandleStartRequested(string playerName, Difficulty difficulty)
+        private void HandleStartRequested(string playerName, Topic topic)
         {
             _playerName = playerName;
-            _lastConfig = SelectConfig(difficulty);
-            BeginRound(_lastConfig);
+            _lastTopic = topic;
+            _lastConfig = SelectConfig(topic);
+            BeginRound(_lastConfig, _lastTopic);
         }
 
-        private void BeginRound(QuizConfig config)
+        private void BeginRound(QuizConfig config, Topic topic)
         {
             screenManager.ShowQuiz();
-            screenManager.Quiz.BeginRound(config, HandleRoundComplete);
+            screenManager.Quiz.BeginRound(config, TopicLabel(topic), HandleRoundComplete);
         }
 
         private void HandleQuizExit()
@@ -98,7 +101,7 @@ namespace KidQuiz.Presentation
 
         private void HandlePlayAgain()
         {
-            BeginRound(_lastConfig);
+            BeginRound(_lastConfig, _lastTopic);
         }
 
         private void HandleGoHome()
@@ -106,13 +109,39 @@ namespace KidQuiz.Presentation
             screenManager.ShowHome();
         }
 
-        private QuizConfig SelectConfig(Difficulty difficulty)
+        private async void HandleViewLeaderboard()
         {
-            return difficulty switch
+            screenManager.ShowLeaderboard();
+            screenManager.Leaderboard.ShowLoading();
+
+            if (_scoreRepository == null)
             {
-                Difficulty.Medium => mediumConfig,
-                Difficulty.Hard => hardConfig,
-                _ => easyConfig
+                screenManager.Leaderboard.ShowUnavailable();
+                return;
+            }
+
+            using var cts = new CancellationTokenSource();
+            var topScores = await _scoreRepository.GetTopAsync(LeaderboardSize, cts.Token);
+            screenManager.Leaderboard.ShowLoaded(topScores);
+        }
+
+        private QuizConfig SelectConfig(Topic topic)
+        {
+            return topic switch
+            {
+                Topic.GeneralKnowledge => generalKnowledgeConfig,
+                Topic.Math => mathConfig,
+                _ => scienceConfig
+            };
+        }
+
+        private static string TopicLabel(Topic topic)
+        {
+            return topic switch
+            {
+                Topic.GeneralKnowledge => "General Knowledge",
+                Topic.Math => "Math",
+                _ => "Science"
             };
         }
     }

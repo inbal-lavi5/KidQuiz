@@ -1,5 +1,4 @@
 using System;
-using KidQuiz.Domain;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,63 +8,74 @@ namespace KidQuiz.Presentation
     public sealed class HomeScreen : UiScreen
     {
         [SerializeField] private TMP_InputField playerNameInput;
-        [SerializeField] private Button easyButton;
-        [SerializeField] private Button mediumButton;
-        [SerializeField] private Button hardButton;
-        [SerializeField] private GameObject easySelectionRing;
-        [SerializeField] private GameObject mediumSelectionRing;
-        [SerializeField] private GameObject hardSelectionRing;
+        [SerializeField] private Button scienceButton;
+        [SerializeField] private Button generalKnowledgeButton;
+        [SerializeField] private Button mathButton;
+        [SerializeField] private GameObject scienceSelectionRing;
+        [SerializeField] private GameObject generalKnowledgeSelectionRing;
+        [SerializeField] private GameObject mathSelectionRing;
         [SerializeField] private Button startButton;
+        [SerializeField] private Button leaderboardButton;
 
-        private Difficulty _selectedDifficulty = Difficulty.Easy;
-        private Action<string, Difficulty> _onStart;
+        private Topic _selectedTopic = Topic.Science;
+        private Action<string, Topic> _onStart;
+        private Action _onViewLeaderboard;
 
-        public void Initialize(Action<string, Difficulty> onStart)
+        public void Initialize(Action<string, Topic> onStart, Action onViewLeaderboard)
         {
             _onStart = onStart;
+            _onViewLeaderboard = onViewLeaderboard;
         }
 
         public override void Show()
         {
             base.Show();
-            SelectDifficulty(Difficulty.Easy);
+            SelectTopic(Topic.Science);
         }
 
         private void OnEnable()
         {
-            easyButton.onClick.AddListener(HandleEasyClicked);
-            mediumButton.onClick.AddListener(HandleMediumClicked);
-            hardButton.onClick.AddListener(HandleHardClicked);
+            scienceButton.onClick.AddListener(HandleScienceClicked);
+            generalKnowledgeButton.onClick.AddListener(HandleGeneralKnowledgeClicked);
+            mathButton.onClick.AddListener(HandleMathClicked);
             startButton.onClick.AddListener(HandleStart);
+            if (leaderboardButton != null)
+            {
+                leaderboardButton.onClick.AddListener(HandleViewLeaderboard);
+            }
         }
 
         private void OnDisable()
         {
-            easyButton.onClick.RemoveListener(HandleEasyClicked);
-            mediumButton.onClick.RemoveListener(HandleMediumClicked);
-            hardButton.onClick.RemoveListener(HandleHardClicked);
+            scienceButton.onClick.RemoveListener(HandleScienceClicked);
+            generalKnowledgeButton.onClick.RemoveListener(HandleGeneralKnowledgeClicked);
+            mathButton.onClick.RemoveListener(HandleMathClicked);
             startButton.onClick.RemoveListener(HandleStart);
+            if (leaderboardButton != null)
+            {
+                leaderboardButton.onClick.RemoveListener(HandleViewLeaderboard);
+            }
         }
 
-        private void HandleEasyClicked() => SelectDifficulty(Difficulty.Easy);
-        private void HandleMediumClicked() => SelectDifficulty(Difficulty.Medium);
-        private void HandleHardClicked() => SelectDifficulty(Difficulty.Hard);
+        private void HandleScienceClicked() => SelectTopic(Topic.Science);
+        private void HandleGeneralKnowledgeClicked() => SelectTopic(Topic.GeneralKnowledge);
+        private void HandleMathClicked() => SelectTopic(Topic.Math);
 
-        private void SelectDifficulty(Difficulty difficulty)
+        private void SelectTopic(Topic topic)
         {
-            _selectedDifficulty = difficulty;
+            _selectedTopic = topic;
 
-            if (easySelectionRing != null)
+            if (scienceSelectionRing != null)
             {
-                easySelectionRing.SetActive(difficulty == Difficulty.Easy);
+                scienceSelectionRing.SetActive(topic == Topic.Science);
             }
-            if (mediumSelectionRing != null)
+            if (generalKnowledgeSelectionRing != null)
             {
-                mediumSelectionRing.SetActive(difficulty == Difficulty.Medium);
+                generalKnowledgeSelectionRing.SetActive(topic == Topic.GeneralKnowledge);
             }
-            if (hardSelectionRing != null)
+            if (mathSelectionRing != null)
             {
-                hardSelectionRing.SetActive(difficulty == Difficulty.Hard);
+                mathSelectionRing.SetActive(topic == Topic.Math);
             }
         }
 
@@ -75,7 +85,12 @@ namespace KidQuiz.Presentation
                 ? "Player"
                 : playerNameInput.text.Trim();
 
-            _onStart?.Invoke(playerName, _selectedDifficulty);
+            _onStart?.Invoke(playerName, _selectedTopic);
+        }
+
+        private void HandleViewLeaderboard()
+        {
+            _onViewLeaderboard?.Invoke();
         }
     }
 }

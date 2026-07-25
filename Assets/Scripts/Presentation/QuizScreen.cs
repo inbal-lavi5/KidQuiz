@@ -20,6 +20,9 @@ namespace KidQuiz.Presentation
         [SerializeField] private Transform answerButtonParent;
         [SerializeField] private AnswerButton answerButtonPrefab;
         [SerializeField] private Button backButton;
+        [SerializeField] private GameObject questionCard;
+        [SerializeField] private GameObject answerButtonContainer;
+        [SerializeField] private GameObject loadingPanel;
         [SerializeField] private float feedbackDelaySeconds = 1.2f;
 
         private ObjectPool<AnswerButton> _buttonPool;
@@ -27,6 +30,7 @@ namespace KidQuiz.Presentation
 
         private IQuestionProvider _questionProvider;
         private QuizConfig _config;
+        private string _topicLabel;
         private Action<QuizResult> _onComplete;
         private Action _onExit;
 
@@ -78,15 +82,16 @@ namespace KidQuiz.Presentation
             StopActiveRoutine();
         }
 
-        public async void BeginRound(QuizConfig config, Action<QuizResult> onComplete)
+        public async void BeginRound(QuizConfig config, string topicLabel, Action<QuizResult> onComplete)
         {
             _config = config;
+            _topicLabel = topicLabel;
             _onComplete = onComplete;
             _correctCount = 0;
             _questionNumber = 0;
             scoreText.text = "0";
-            questionText.text = "Loading...";
             ClearAnswerButtons();
+            SetLoading(true);
 
             _fetchCts?.Cancel();
             _fetchCts = new CancellationTokenSource();
@@ -101,13 +106,31 @@ namespace KidQuiz.Presentation
 
             if (questions == null || questions.Count == 0)
             {
+                SetLoading(false);
                 questionText.text = "No questions available. Please try again.";
                 return;
             }
 
             _totalQuestions = questions.Count;
             _session = new QuizSession(questions, config.SecondsPerQuestion);
+            SetLoading(false);
             ShowCurrentQuestion();
+        }
+
+        private void SetLoading(bool isLoading)
+        {
+            if (loadingPanel != null)
+            {
+                loadingPanel.SetActive(isLoading);
+            }
+            if (questionCard != null)
+            {
+                questionCard.SetActive(!isLoading);
+            }
+            if (answerButtonContainer != null)
+            {
+                answerButtonContainer.SetActive(!isLoading);
+            }
         }
 
         private void ShowCurrentQuestion()
@@ -124,7 +147,7 @@ namespace KidQuiz.Presentation
             }
             if (categoryText != null)
             {
-                categoryText.text = question.Difficulty.ToString().ToUpperInvariant();
+                categoryText.text = (_topicLabel ?? question.Difficulty.ToString()).ToUpperInvariant();
             }
 
             int slotIndex = 0;
