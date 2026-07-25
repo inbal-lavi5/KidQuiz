@@ -1,2 +1,4 @@
 ﻿<Solution>
+  <Project Path="KidQuiz.Domain.csproj" />
+  <Project Path="KidQuiz.Domain.Tests.csproj" />
 </Solution>
