@@ -4,6 +4,7 @@ using KidQuiz.Config;
 using KidQuiz.Data;
 using KidQuiz.Domain;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace KidQuiz.Presentation
 {
@@ -78,6 +79,33 @@ namespace KidQuiz.Presentation
         private void HandleQuizExit()
         {
             screenManager.ShowHome();
+        }
+
+        // Android hardware back button (the new Input System maps it to the
+        // virtual Escape key on Keyboard.current). Home quits the app; every
+        // other screen goes back to Home, matching its own Back button.
+        private void Update()
+        {
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                HandleBackPressed();
+            }
+        }
+
+        private void HandleBackPressed()
+        {
+            if (screenManager.Home.gameObject.activeSelf)
+            {
+                Application.Quit();
+            }
+            else if (screenManager.Quiz.gameObject.activeSelf)
+            {
+                HandleQuizExit();
+            }
+            else
+            {
+                HandleGoHome();
+            }
         }
 
         private async void HandleRoundComplete(QuizResult result)

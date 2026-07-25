@@ -5,7 +5,8 @@
         "KidQuiz.Domain",
         "KidQuiz.Data",
         "KidQuiz.Config",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
