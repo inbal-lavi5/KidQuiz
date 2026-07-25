@@ -5,7 +5,6 @@ namespace KidQuiz.Domain
 {
     public sealed class Question
     {
-        public string Id { get; }
         public string Prompt { get; }
         public IReadOnlyList<string> Options { get; }
         public string CorrectAnswer => _correctAnswer;
@@ -13,13 +12,11 @@ namespace KidQuiz.Domain
         private readonly string _correctAnswer;
 
         public Question(
-            string id,
             string prompt,
             string correctAnswer,
             IReadOnlyList<string> incorrectAnswers,
             IRandomizer randomizer)
         {
-            Id = id;
             Prompt = prompt;
             _correctAnswer = correctAnswer;
 

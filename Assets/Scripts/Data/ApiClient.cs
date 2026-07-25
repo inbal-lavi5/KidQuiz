@@ -21,24 +21,22 @@ namespace KidQuiz.Data
         public bool IsSuccess { get; }
         public T Value { get; }
         public ApiErrorKind ErrorKind { get; }
-        public string ErrorMessage { get; }
 
-        private ApiResult(bool isSuccess, T value, ApiErrorKind errorKind, string errorMessage)
+        private ApiResult(bool isSuccess, T value, ApiErrorKind errorKind)
         {
             IsSuccess = isSuccess;
             Value = value;
             ErrorKind = errorKind;
-            ErrorMessage = errorMessage;
         }
 
         public static ApiResult<T> Success(T value)
         {
-            return new ApiResult<T>(true, value, ApiErrorKind.None, null);
+            return new ApiResult<T>(true, value, ApiErrorKind.None);
         }
 
-        public static ApiResult<T> Failure(ApiErrorKind kind, string message)
+        public static ApiResult<T> Failure(ApiErrorKind kind)
         {
-            return new ApiResult<T>(false, default, kind, message);
+            return new ApiResult<T>(false, default, kind);
         }
     }
 
@@ -118,7 +116,7 @@ namespace KidQuiz.Data
             catch (TaskCanceledException)
             {
                 request.Abort();
-                return ApiResult<T>.Failure(ApiErrorKind.Network, "Request cancelled.");
+                return ApiResult<T>.Failure(ApiErrorKind.Network);
             }
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -126,12 +124,12 @@ namespace KidQuiz.Data
             {
                 bool isTimeout = request.error != null &&
                                   request.error.IndexOf("timeout", StringComparison.OrdinalIgnoreCase) >= 0;
-                return ApiResult<T>.Failure(isTimeout ? ApiErrorKind.Timeout : ApiErrorKind.Network, request.error);
+                return ApiResult<T>.Failure(isTimeout ? ApiErrorKind.Timeout : ApiErrorKind.Network);
             }
 
             if (request.result == UnityWebRequest.Result.ProtocolError)
             {
-                return ApiResult<T>.Failure(ApiErrorKind.HttpError, $"{request.responseCode}: {request.error}");
+                return ApiResult<T>.Failure(ApiErrorKind.HttpError);
             }
 
             if (!expectBody)
@@ -144,9 +142,9 @@ namespace KidQuiz.Data
                 T value = JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
                 return ApiResult<T>.Success(value);
             }
-            catch (JsonException ex)
+            catch (JsonException)
             {
-                return ApiResult<T>.Failure(ApiErrorKind.ParseError, ex.Message);
+                return ApiResult<T>.Failure(ApiErrorKind.ParseError);
             }
         }
     }

@@ -6,17 +6,7 @@ namespace KidQuiz.Domain
     // Uses System.Random, not UnityEngine.Random - this layer never references UnityEngine.
     public sealed class SystemRandomizer : IRandomizer
     {
-        private readonly Random _random;
-
-        public SystemRandomizer()
-        {
-            _random = new Random();
-        }
-
-        public SystemRandomizer(int seed)
-        {
-            _random = new Random(seed);
-        }
+        private readonly Random _random = new Random();
 
         public void Shuffle<T>(IList<T> list)
         {

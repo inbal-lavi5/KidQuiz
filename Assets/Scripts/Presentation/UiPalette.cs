@@ -19,7 +19,7 @@ namespace KidQuiz.Presentation
         public static readonly Color Silver = HexColor("#D8D8D8");
         public static readonly Color Bronze = HexColor("#E0A458");
 
-        public static Color HexColor(string hex)
+        private static Color HexColor(string hex)
         {
             ColorUtility.TryParseHtmlString(hex, out Color color);
             return color;

@@ -15,7 +15,6 @@ namespace KidQuiz.Domain.Tests
             for (int i = 0; i < count; i++)
             {
                 questions.Add(new Question(
-                    $"q{i}",
                     $"Question {i}",
                     "Correct",
                     new[] { "Wrong1", "Wrong2", "Wrong3" },

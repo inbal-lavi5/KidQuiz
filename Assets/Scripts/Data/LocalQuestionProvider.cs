@@ -38,7 +38,6 @@ namespace KidQuiz.Data
             {
                 QuestionBank.Entry entry = pool[i];
                 questions.Add(new Question(
-                    Guid.NewGuid().ToString(),
                     entry.prompt,
                     entry.correctAnswer,
                     entry.incorrectAnswers,

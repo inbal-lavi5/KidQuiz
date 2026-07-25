@@ -8,7 +8,6 @@ namespace KidQuiz.Domain.Tests
         private static Question CreateQuestion(string correctAnswer)
         {
             return new Question(
-                "q1",
                 "What color is the sky?",
                 correctAnswer,
                 new[] { "Red", "Green", "Yellow" },

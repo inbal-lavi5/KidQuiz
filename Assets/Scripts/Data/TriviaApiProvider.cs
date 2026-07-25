@@ -43,7 +43,6 @@ namespace KidQuiz.Data
                 List<string> incorrectAnswers = dto.incorrect_answers.Select(WebUtility.HtmlDecode).ToList();
 
                 questions.Add(new Question(
-                    Guid.NewGuid().ToString(),
                     prompt,
                     correctAnswer,
                     incorrectAnswers,
