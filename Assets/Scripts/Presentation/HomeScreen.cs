@@ -7,8 +7,6 @@ namespace KidQuiz.Presentation
 {
     public sealed class HomeScreen : UiScreen
     {
-        private const string SoundMutedPrefKey = "KidQuiz.SoundMuted";
-
         [SerializeField] private TMP_InputField playerNameInput;
         [SerializeField] private Button scienceButton;
         [SerializeField] private Button generalKnowledgeButton;
@@ -17,26 +15,31 @@ namespace KidQuiz.Presentation
         [SerializeField] private GameObject generalKnowledgeSelectionRing;
         [SerializeField] private GameObject mathSelectionRing;
         [SerializeField] private Button startButton;
+        [SerializeField] private TMP_Text nameHintText;
         [SerializeField] private Button leaderboardButton;
         [SerializeField] private Button soundToggleButton;
-        [SerializeField] private Image soundToggleFill;
-        [SerializeField] private TMP_Text soundToggleLabel;
+        [SerializeField] private Image soundIcon;
+        [SerializeField] private Sprite soundOnSprite;
+        [SerializeField] private Sprite soundOffSprite;
 
         private Topic _selectedTopic = Topic.Science;
-        private bool _isMuted;
         private Action<string, Topic> _onStart;
         private Action _onViewLeaderboard;
+        private Action _onToggleSound;
 
-        private void Awake()
-        {
-            _isMuted = PlayerPrefs.GetInt(SoundMutedPrefKey, 0) == 1;
-            ApplyMuteState();
-        }
-
-        public void Initialize(Action<string, Topic> onStart, Action onViewLeaderboard)
+        public void Initialize(Action<string, Topic> onStart, Action onViewLeaderboard, Action onToggleSound)
         {
             _onStart = onStart;
             _onViewLeaderboard = onViewLeaderboard;
+            _onToggleSound = onToggleSound;
+        }
+
+        public void SetMuted(bool isMuted)
+        {
+            if (soundIcon != null)
+            {
+                soundIcon.sprite = isMuted ? soundOffSprite : soundOnSprite;
+            }
         }
 
         public override void Show()
@@ -109,7 +112,13 @@ namespace KidQuiz.Presentation
 
         private void UpdateStartButtonState()
         {
-            startButton.interactable = !string.IsNullOrWhiteSpace(playerNameInput.text);
+            bool hasName = !string.IsNullOrWhiteSpace(playerNameInput.text);
+            startButton.interactable = hasName;
+
+            if (nameHintText != null)
+            {
+                nameHintText.gameObject.SetActive(!hasName);
+            }
         }
 
         private void HandleStart()
@@ -130,24 +139,7 @@ namespace KidQuiz.Presentation
 
         private void HandleSoundToggle()
         {
-            _isMuted = !_isMuted;
-            PlayerPrefs.SetInt(SoundMutedPrefKey, _isMuted ? 1 : 0);
-            PlayerPrefs.Save();
-            ApplyMuteState();
-        }
-
-        private void ApplyMuteState()
-        {
-            AudioListener.volume = _isMuted ? 0f : 1f;
-
-            if (soundToggleFill != null)
-            {
-                soundToggleFill.color = _isMuted ? UiPalette.Silver : UiPalette.SkyBlue;
-            }
-            if (soundToggleLabel != null)
-            {
-                soundToggleLabel.text = _isMuted ? "OFF" : "ON";
-            }
+            _onToggleSound?.Invoke();
         }
     }
 }

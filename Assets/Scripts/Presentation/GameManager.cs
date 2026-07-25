@@ -14,6 +14,7 @@ namespace KidQuiz.Presentation
         public static GameManager Instance { get; private set; }
 
         [SerializeField] private ScreenManager screenManager;
+        [SerializeField] private AudioManager audioManager;
         [SerializeField] private QuizConfig scienceConfig;
         [SerializeField] private QuizConfig generalKnowledgeConfig;
         [SerializeField] private QuizConfig mathConfig;
@@ -53,8 +54,9 @@ namespace KidQuiz.Presentation
 
         private void Start()
         {
-            screenManager.Home.Initialize(HandleStartRequested, HandleViewLeaderboard);
-            screenManager.Quiz.Initialize(_questionProvider, HandleQuizExit);
+            screenManager.Home.Initialize(HandleStartRequested, HandleViewLeaderboard, HandleToggleSound);
+            screenManager.Home.SetMuted(audioManager.IsMuted);
+            screenManager.Quiz.Initialize(_questionProvider, HandleQuizExit, audioManager);
             screenManager.Results.Initialize(HandlePlayAgain, HandleGoHome);
             screenManager.Leaderboard.Initialize(HandleGoHome, HandleLeaderboardTopicSelected);
             screenManager.ShowHome();
@@ -81,8 +83,9 @@ namespace KidQuiz.Presentation
 
         private async void HandleRoundComplete(QuizResult result)
         {
+            string category = TopicLabel(_lastTopic);
             screenManager.ShowResults();
-            screenManager.Results.ShowResult(result, _playerName);
+            screenManager.Results.ShowResult(result, _playerName, category);
 
             if (_scoreRepository == null)
             {
@@ -90,7 +93,6 @@ namespace KidQuiz.Presentation
                 return;
             }
 
-            string category = TopicLabel(_lastTopic);
             var entry = new ScoreEntry(_playerName, result.Score, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), category);
             using var cts = new CancellationTokenSource();
 
@@ -129,6 +131,12 @@ namespace KidQuiz.Presentation
             using var cts = new CancellationTokenSource();
             var topScores = await _scoreRepository.GetTopAsync(TopicLabel(topic), LeaderboardSize, cts.Token);
             screenManager.Leaderboard.ShowLoaded(topScores);
+        }
+
+        private void HandleToggleSound()
+        {
+            audioManager.ToggleMuted();
+            screenManager.Home.SetMuted(audioManager.IsMuted);
         }
 
         private QuizConfig SelectConfig(Topic topic)

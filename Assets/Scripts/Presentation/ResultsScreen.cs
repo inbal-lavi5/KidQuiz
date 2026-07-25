@@ -12,6 +12,7 @@ namespace KidQuiz.Presentation
         [SerializeField] private TMP_Text scoreText;
         [SerializeField] private TMP_Text correctText;
         [SerializeField] private TMP_Text subtitleText;
+        [SerializeField] private TMP_Text leaderboardTitleText;
         [SerializeField] private Button playAgainButton;
         [SerializeField] private Button homeButton;
         [SerializeField] private LeaderboardView leaderboardView;
@@ -25,7 +26,7 @@ namespace KidQuiz.Presentation
             _onHome = onHome;
         }
 
-        public void ShowResult(QuizResult result, string playerName)
+        public void ShowResult(QuizResult result, string playerName, string category)
         {
             scoreText.text = $"{result.CorrectCount}/{result.TotalQuestions}";
             correctText.text = $"Correct Answers · {result.Score} pts";
@@ -33,6 +34,10 @@ namespace KidQuiz.Presentation
             if (subtitleText != null)
             {
                 subtitleText.text = $"Great exploring, {playerName}!";
+            }
+            if (leaderboardTitleText != null)
+            {
+                leaderboardTitleText.text = $"{category} Leaderboard";
             }
 
             leaderboardView.SetCurrentPlayerName(playerName);

@@ -29,6 +29,7 @@ namespace KidQuiz.Presentation
         private readonly List<AnswerButton> _activeButtons = new();
 
         private IQuestionProvider _questionProvider;
+        private AudioManager _audioManager;
         private QuizConfig _config;
         private string _topicLabel;
         private Action<QuizResult> _onComplete;
@@ -48,10 +49,11 @@ namespace KidQuiz.Presentation
             _buttonPool = new ObjectPool<AnswerButton>(answerButtonPrefab, answerButtonParent, prewarmCount: 4);
         }
 
-        public void Initialize(IQuestionProvider questionProvider, Action onExit)
+        public void Initialize(IQuestionProvider questionProvider, Action onExit, AudioManager audioManager)
         {
             _questionProvider = questionProvider;
             _onExit = onExit;
+            _audioManager = audioManager;
         }
 
         private void OnEnable()
@@ -80,6 +82,7 @@ namespace KidQuiz.Presentation
             base.Hide();
             _fetchCts?.Cancel();
             StopActiveRoutine();
+            _audioManager?.StopMusic();
         }
 
         public async void BeginRound(QuizConfig config, string topicLabel, Action<QuizResult> onComplete)
@@ -92,6 +95,7 @@ namespace KidQuiz.Presentation
             scoreText.text = "0";
             ClearAnswerButtons();
             SetLoading(true);
+            _audioManager?.PlayMusic();
 
             _fetchCts?.Cancel();
             _fetchCts = new CancellationTokenSource();
@@ -207,6 +211,11 @@ namespace KidQuiz.Presentation
             if (result.WasCorrect)
             {
                 _correctCount++;
+                _audioManager?.PlayCorrect();
+            }
+            else
+            {
+                _audioManager?.PlayWrong();
             }
 
             scoreText.text = _session.Score.ToString();
