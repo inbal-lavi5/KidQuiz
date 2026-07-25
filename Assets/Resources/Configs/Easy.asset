@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c5a69b906d31f438851fb2bf9731d7, type: 3}
+  m_Name: Easy
+  m_EditorClassIdentifier:
+  questionsPerRound: 10
+  secondsPerQuestion: 20
+  basePoints: 100
+  timeBonusMultiplier: 1
+  difficulty: 0
+  triviaCategoryId: 9
