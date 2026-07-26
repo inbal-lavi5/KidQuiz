@@ -5,9 +5,12 @@ Knowledge, or Math — answer five easy questions against a countdown timer, and
 a per-category leaderboard. Questions come from the [Open Trivia DB](https://opentdb.com/)
 with a curated offline question bank as a fallback when the network is unavailable.
 
-**Play it:** _[itch.io link — add after publishing]_
+**Play it:** _[itch.io](https://itsinb5.itch.io/kidquiz)_
 
-_[Screenshot: Home screen] · [Screenshot: Quiz screen]_
+<img width="304" height="540" alt="Home screen" src="https://github.com/user-attachments/assets/e8619ea1-87ef-43b6-bb17-384669e1bdee" />
+<img width="304" height="540" alt="Quiz screen" src="https://github.com/user-attachments/assets/5cfd55b7-580f-44ed-8604-a9021e33546c" />
+<img width="304" height="540" alt="End screen" src="https://github.com/user-attachments/assets/5ba0d10c-338d-4b63-8d27-481b8a26827a" />
+
 
 ## Architecture
 
@@ -80,6 +83,5 @@ transparently instead of branching logic through the caller.
 ## Deliberately not doing
 
 - No accounts — player name only.
-- No custom art — this is a code sample, not an art showcase.
 - Portrait only — one layout for both targets.
 - No Docker, no CI — nothing here needs them.
