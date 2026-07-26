@@ -64,6 +64,16 @@ only where frame-based timing is the actual point, like the countdown bar's per-
 cares which source answered — a dropped connection degrades to the offline bank
 transparently instead of branching logic through the caller.
 
+## Design & Creative Process
+
+The game's mascot was designed with the help of AI tools, using iterative prompting
+and refinement to create a friendly, kid-oriented character that matches the game's
+tone and visual style.
+
+The overall game design, UI flow, and feature planning were developed with assistance
+from Claude Code, which was used as a design and development partner for exploring
+ideas, structuring systems, and refining implementation decisions.
+
 ## Known limitations
 
 - **Client-authoritative scoring.** The score is calculated on-device and submitted as-is;
