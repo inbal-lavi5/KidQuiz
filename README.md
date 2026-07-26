@@ -7,9 +7,9 @@ with a curated offline question bank as a fallback when the network is unavailab
 
 **Play it:** _[itch.io](https://itsinb5.itch.io/kidquiz)_
 
-<img width="304" height="540" alt="Home screen" src="https://github.com/user-attachments/assets/e8619ea1-87ef-43b6-bb17-384669e1bdee" />
-<img width="304" height="540" alt="Quiz screen" src="https://github.com/user-attachments/assets/5cfd55b7-580f-44ed-8604-a9021e33546c" />
-<img width="304" height="540" alt="End screen" src="https://github.com/user-attachments/assets/5ba0d10c-338d-4b63-8d27-481b8a26827a" />
+<img width="202" height="360" alt="Home screen" src="https://github.com/user-attachments/assets/e8619ea1-87ef-43b6-bb17-384669e1bdee" />
+<img width="202" height="360" alt="Quiz screen" src="https://github.com/user-attachments/assets/5cfd55b7-580f-44ed-8604-a9021e33546c" />
+<img width="202" height="360" alt="End screen" src="https://github.com/user-attachments/assets/5ba0d10c-338d-4b63-8d27-481b8a26827a" />
 
 
 ## Architecture
